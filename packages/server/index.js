@@ -129,11 +129,6 @@ const removeAllSalary = (player) => {
   player.call('displayMoney', [newAmount])
 }
 
-mp.events.add('toggleWork', (player) => {
-  const isWork = player.getVariable('isWork') ? true : false
-  togglePlayerWork(player, !isWork)
-})
-
 mp.events.add('playerDeath', (player) => {
   const isWork = player.getVariable('isWork')
   if (isWork) {
@@ -143,26 +138,35 @@ mp.events.add('playerDeath', (player) => {
 })
 
 mp.events.add('pressE', async (player) => {
-  const indexOfWorkPlace = workPlaces.findIndex((w) => w.playerId === player.id)
-  if (indexOfWorkPlace < 0) return
-
-  const workPlace = workPlaces[indexOfWorkPlace]
-  if (workPlace.isWork) return
-
   const { x, y, z } = player.position
   const playerPosition = new mp.Vector3(x, y, z)
 
-  const isOnWorkPlace = workPlace.shape.isPointWithin(playerPosition)
-  if (!isOnWorkPlace) return
+  if (toggleWorkShape.isPointWithin(playerPosition)) {
+    // Взаємодія з міткою влаштування/звільнення з роботи
+    const isWork = player.getVariable('isWork') ? true : false
+    togglePlayerWork(player, !isWork)
+  } else {
+    // Взаємодія з міткою місця роботи
+    const indexOfWorkPlace = workPlaces.findIndex(
+      (w) => w.playerId === player.id
+    )
+    if (indexOfWorkPlace < 0) return
 
-  player.call('startWorkAnimation')
-  await new Promise((res) => setTimeout(res, 26000))
+    const workPlace = workPlaces[indexOfWorkPlace]
+    if (workPlace.isWork) return
 
-  const salary = 500
-  addSalary(player, salary)
-  removeWorkPlace(player)
+    const isOnWorkPlace = workPlace.shape.isPointWithin(playerPosition)
+    if (!isOnWorkPlace) return
 
-  createWorkPlace(player, workPlace)
+    player.call('startWorkAnimation')
+    await new Promise((res) => setTimeout(res, 26000))
+
+    const salary = 500
+    addSalary(player, salary)
+    removeWorkPlace(player)
+
+    createWorkPlace(player, workPlace)
+  }
 })
 
 mp.events.addCommand('test', (player) => {
