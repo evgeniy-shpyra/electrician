@@ -6,6 +6,20 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled)
 }
 
+// 
+const markerRadius = 1.1
+
+// Мітка взяття/звільнення з роботи
+const toggleWorkPosition = new mp.Vector3(732.56, 131.26, 79.75)
+const toggleWorkShape = mp.colshapes.newSphere(
+  toggleWorkPosition.x,
+  toggleWorkPosition.y,
+  toggleWorkPosition.z,
+  markerRadius
+)
+mp.markers.new(1, toggleWorkPosition, 1)
+
+// Мітки місць роботи
 const workPlacesPosition = [
   new mp.Vector3(664.6714477539062, 112.72749328613281, 80),
   new mp.Vector3(670.2241821289062, 128.05892944335938, 80),
@@ -31,7 +45,7 @@ const initWorkerMarkers = () => {
       position.x,
       position.y,
       position.z,
-      1.1
+      markerRadius
     )
     const marker = mp.markers.new(1, position, 1, {
       color: [255, 0, 0, 100],
@@ -63,7 +77,6 @@ const createWorkPlace = (player, prevWorkPlace) => {
 
   marker.showFor(player)
 }
-
 const removeWorkPlace = (player) => {
   const indexOfWorkPlace = workPlaces.findIndex((w) => w.playerId === player.id)
   if (indexOfWorkPlace < 0) return
@@ -104,6 +117,7 @@ const togglePlayerWork = (player, isWork) => {
   }
 }
 
+// Заробітна плата
 const addSalary = (player, amount) => {
   const currAmount = player.getOwnVariable('money') || 0
 
@@ -115,7 +129,6 @@ const addSalary = (player, amount) => {
 
   player.call('displayMoney', [newAmount])
 }
-
 const removeAllSalary = (player) => {
   const totalSalary = player.getOwnVariable('totalSalary')
   if (!totalSalary) return
@@ -125,7 +138,6 @@ const removeAllSalary = (player) => {
   const newAmount = allAmount - totalSalary
   player.setOwnVariable('money', newAmount)
   player.setOwnVariable('totalSalary', 0)
-  player.outputChatBox(`newAmount ${newAmount}, allAmount ${allAmount}`)
   player.call('displayMoney', [newAmount])
 }
 
@@ -169,6 +181,20 @@ mp.events.add('pressE', async (player) => {
   }
 })
 
-mp.events.addCommand('test', (player) => {
-  player.call('addSalary', [500])
+// Робоча зона
+const workZoneCenterPosition = new mp.Vector3(691.0815, 118.4343, 85.8773)
+const workZoneRadius = 76
+const workZoneShape = mp.colshapes.newSphere(
+  workZoneCenterPosition.x,
+  workZoneCenterPosition.y,
+  workZoneCenterPosition.z,
+  workZoneRadius
+)
+mp.events.add('playerExitColshape', (player, shape) => {
+  if (shape != workZoneShape) return
+  const isWork = player.getVariable('isWork') ? true : false
+  if (!isWork) return
+
+  togglePlayerWork(player, false)
+  removeAllSalary(player)
 })
