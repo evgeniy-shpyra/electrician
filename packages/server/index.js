@@ -230,7 +230,9 @@ mp.events.add('tryHandleMarker', async (player) => {
 
     const isOnWorkPlace = workPlace.shape.isPointWithin(playerPosition)
     if (!isOnWorkPlace) return
-
+    
+    workPlace.isWork = true
+    
     player.call('startWorkAnimation')
     await new Promise((res) => setTimeout(res, 26000))
 
