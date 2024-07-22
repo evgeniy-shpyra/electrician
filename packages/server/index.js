@@ -6,7 +6,7 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled)
 }
 
-// 
+//
 const markerRadius = 1.1
 
 // Мітка взяття/звільнення з роботи
@@ -182,8 +182,8 @@ mp.events.add('pressE', async (player) => {
 })
 
 // Робоча зона
-const workZoneCenterPosition = new mp.Vector3(691.0815, 118.4343, 85.8773)
-const workZoneRadius = 76
+const workZoneCenterPosition = new mp.Vector3(690.0815, 116.4343, 85.8773)
+const workZoneRadius = 74
 const workZoneShape = mp.colshapes.newSphere(
   workZoneCenterPosition.x,
   workZoneCenterPosition.y,
