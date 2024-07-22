@@ -193,8 +193,8 @@ const workZoneShape = mp.colshapes.newSphere(
 )
 mp.events.add('playerExitColshape', (player, shape) => {
   if (shape != workZoneShape) return
-  const isWork = isPlayerHasJob(player)
-  if (!isWork) return
+  const isOnJob = isPlayerHasJob(player)
+  if (!isOnJob) return
 
   removeAllSalary(player)
   turnOffJob(player)
@@ -202,8 +202,8 @@ mp.events.add('playerExitColshape', (player, shape) => {
 
 // Смерть гравця
 mp.events.add('playerDeath', (player) => {
-  const isWork = isPlayerHasJob(player)
-  if (isWork) {
+  const isOnJob = isPlayerHasJob(player)
+  if (isOnJob) {
     removeAllSalary(player)
     turnOffJob(player)
   }
@@ -218,8 +218,8 @@ mp.events.add('tryHandleMarker', async (player) => {
 
   if (toggleWorkShape.isPointWithin(playerPosition)) {
     // Взаємодія з міткою влаштування/звільнення з роботи
-    const isWork = isPlayerHasJob(player)
-    if (isWork) {
+    const isOnJob = isPlayerHasJob(player)
+    if (isOnJob) {
       turnOffJob(player)
     } else {
       turnOnJob(player)
