@@ -105,7 +105,9 @@ const turnOnJob = (player) => {
   player.setClothes(8, 181, 0, 0)
 
   // Оповіщення
-  player.outputChatBox('Вас прийнято на роботу. Робочий день розпочато.')
+  player.outputChatBox(
+    '!{00FF00}Вас прийнято на роботу. Робочий день розпочато.'
+  )
   player.notify('~g~Вирушайте на першу мiтку')
 
   player.setVariable('isWork', true)
@@ -141,8 +143,7 @@ const turnOffJob = (player) => {
   removeWorkPlace(player)
 
   // Оповіщення
-  player.outputChatBox('Вас звільнено з роботи.')
-  player.setVariable('isWork', false)
+  player.outputChatBox('!{FF0000}Вас звільнено з роботи.')
 }
 
 // Заробітна плата
