@@ -149,7 +149,7 @@ mp.events.add('playerDeath', (player) => {
   }
 })
 
-mp.events.add('pressE', async (player) => {
+mp.events.add('tryHandleMarker', async (player) => {
   const { x, y, z } = player.position
   const playerPosition = new mp.Vector3(x, y, z)
 

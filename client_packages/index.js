@@ -1,5 +1,5 @@
 mp.keys.bind(0x45, true, function () {
-  mp.events.callRemote('pressE')
+  mp.events.callRemote('tryHandleMarker')
 })
 
 mp.events.add('startWorkAnimation', async () => {
