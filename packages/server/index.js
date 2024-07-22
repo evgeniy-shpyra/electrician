@@ -62,9 +62,9 @@ const initWorkerMarkers = () => {
 initWorkerMarkers()
 
 // Перевірка чи гравець влаштований на роботу
-const isPlayerHasJob = (player) => {
+const checkIsPlayerHasJob = (player) => {
   const workPlace = workPlaces.find((w) => w.playerId === player.id)
-  return workPlace ? true : false
+  return workPlace
 }
 
 // створення/видаляння міток місць роботи
@@ -192,17 +192,26 @@ const workZoneShape = mp.colshapes.newSphere(
   workZoneRadius
 )
 mp.events.add('playerExitColshape', (player, shape) => {
-  if (shape != workZoneShape) return
-  const isOnJob = isPlayerHasJob(player)
-  if (!isOnJob) return
+  if (shape === workZoneShape) {
+    const isOnJob = checkIsPlayerHasJob(player)
+    if (!isOnJob) return
 
-  removeAllSalary(player)
-  turnOffJob(player)
+    removeAllSalary(player)
+    turnOffJob(player)
+    return
+  }
+
+  // Додаткова превірка на покидання робочого місця (наприклад телепортація)
+  const workPlace = checkIsPlayerHasJob(player)
+  if (workPlace && workPlace.shape === shape && workPlace.isWork) {
+    removeAllSalary(player)
+    turnOffJob(player)
+  }
 })
 
 // Смерть гравця
 mp.events.add('playerDeath', (player) => {
-  const isOnJob = isPlayerHasJob(player)
+  const isOnJob = checkIsPlayerHasJob(player)
   if (isOnJob) {
     removeAllSalary(player)
     turnOffJob(player)
@@ -218,7 +227,7 @@ mp.events.add('tryHandleMarker', async (player) => {
 
   if (toggleWorkShape.isPointWithin(playerPosition)) {
     // Взаємодія з міткою влаштування/звільнення з роботи
-    const isOnJob = isPlayerHasJob(player)
+    const isOnJob = checkIsPlayerHasJob(player)
     if (isOnJob) {
       turnOffJob(player)
     } else {
@@ -240,7 +249,9 @@ mp.events.add('tryHandleMarker', async (player) => {
     workPlace.isWork = true
 
     player.call('startWorkAnimation')
-    await new Promise((res) => setTimeout(res, 26000))
+    await new Promise((res) => setTimeout(res, 26000).unref())
+    
+    if (!workPlace.isWork) return
 
     const salary = 500
     addSalary(player, salary)
