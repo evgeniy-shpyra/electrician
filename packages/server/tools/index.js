@@ -3,10 +3,9 @@ mp.events.addCommand('pos', (player) => {
 })
 
 mp.events.addCommand('move', (player) => {
-  player.position = new mp.Vector3(741, 132.6, 80)
+  player.position = new mp.Vector3(722.22, 138.37, 80.75)
 })
 
 mp.events.addCommand('kill', (player) => {
   player.health = 0
 })
-
