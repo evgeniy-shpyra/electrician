@@ -15,7 +15,7 @@ mp.events.add('startWorkAnimation', async () => {
     }
   }
 
-  player.taskPlayAnim(animDict, animName, 8, 8, -1, 0, 0.0, false, false, false)
+  player.taskPlayAnim(animDict, animName, 8, 8, -1, 0, 0.0, true, true, true)
 })
 
 const changePlayerMoney = (player, money) => {
