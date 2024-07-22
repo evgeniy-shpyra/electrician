@@ -74,6 +74,7 @@ const createWorkPlace = (player, prevWorkPlace) => {
       (w.playerId === null && !prevWorkPlace) ||
       (prevWorkPlace && prevWorkPlace.id !== w.id)
   )
+
   const randomIndex = getRandomInt(0, freePositions.length - 1)
   const { id, marker } = freePositions[randomIndex]
 
@@ -94,6 +95,13 @@ const removeWorkPlace = (player) => {
 
 // Взяття/звільнення з роботи
 const turnOnJob = (player) => {
+  // Перевірка чи є робочі місця
+  const freePositions = workPlaces.filter((w) => w.playerId === null)
+  if (freePositions.length < 2) {
+    player.outputChatBox('!{FF0000}Всі робочі місця зайняті')
+    return
+  }
+
   // Зберігання попереднього одягу
   const prevModel = player.model
   const prevTorso = player.getClothes(3)
@@ -148,7 +156,6 @@ const turnOffJob = (player) => {
   // Видалення робочого місця
   removeWorkPlace(player)
 
-  // Оповіщення
   player.outputChatBox('!{FF0000}Вас звільнено з роботи.')
 }
 
@@ -178,15 +185,24 @@ const handleWork = async (player) => {
 const addSalary = (player, amount) => {
   // Безпека
   if (amount > 1000) {
-    player.outputChatBox('Ви не можете отримати таку велику суму грошей.')
+    player.outputChatBox(
+      '!{FF0000}Ви не можете отримати таку велику суму грошей'
+    )
+    return
+  }
+  const workPlace = checkIsPlayerHasJob(player)
+  if (!workPlace || !workPlace.isWork) {
+    player.outputChatBox(
+      '!{FF0000}Ви не можете отримати кошти перебуваючи не на робочому місці'
+    )
     return
   }
 
   const currAmount = player.getOwnVariable('money') || 0
-
   const totalSalary = player.getOwnVariable('totalSalary') || 0
 
   const newAmount = currAmount + amount
+
   player.setOwnVariable('money', newAmount)
   player.setOwnVariable('totalSalary', totalSalary + amount)
 
