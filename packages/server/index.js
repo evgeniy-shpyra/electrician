@@ -152,6 +152,28 @@ const turnOffJob = (player) => {
   player.outputChatBox('!{FF0000}Вас звільнено з роботи.')
 }
 
+// Взаємодія з міткою місця роботи
+const handleWork = async (player) => {
+  const indexOfWorkPlace = workPlaces.findIndex((w) => w.playerId === player.id)
+  if (indexOfWorkPlace < 0) return
+
+  const workPlace = workPlaces[indexOfWorkPlace]
+  if (workPlace.isWork) return
+
+  workPlace.isWork = true
+
+  player.call('startWorkAnimation')
+  await new Promise((res) => setTimeout(res, 26000).unref())
+
+  if (!workPlace.isWork) return
+
+  const salary = 500
+  addSalary(player, salary)
+  removeWorkPlace(player)
+
+  createWorkPlace(player, workPlace)
+}
+
 // Заробітна плата
 const addSalary = (player, amount) => {
   // Безпека
@@ -241,22 +263,9 @@ mp.events.add('tryHandleMarker', async (player) => {
     if (indexOfWorkPlace < 0) return
 
     const workPlace = workPlaces[indexOfWorkPlace]
-    if (workPlace.isWork) return
-
     const isOnWorkPlace = workPlace.shape.isPointWithin(playerPosition)
     if (!isOnWorkPlace) return
 
-    workPlace.isWork = true
-
-    player.call('startWorkAnimation')
-    await new Promise((res) => setTimeout(res, 26000).unref())
-    
-    if (!workPlace.isWork) return
-
-    const salary = 500
-    addSalary(player, salary)
-    removeWorkPlace(player)
-
-    createWorkPlace(player, workPlace)
+    await handleWork(player)
   }
 })
