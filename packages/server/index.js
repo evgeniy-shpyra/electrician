@@ -17,6 +17,13 @@ const toggleWorkShape = mp.colshapes.newSphere(
   markerRadius
 )
 mp.markers.new(1, toggleWorkPosition, 1)
+mp.blips.new(354, toggleWorkPosition, {
+  name: 'Робота електрика',
+  scale: 2.0,
+  color: 4,
+  shortRange: false,
+  dimension: 0,
+})
 
 // Мітки місць роботи, ініціалізація
 const workPlacesPosition = [
@@ -54,6 +61,7 @@ const initWorkerMarkers = () => {
       id: i,
       playerId: null,
       isWork: false,
+      position,
       marker,
       shape,
     })
@@ -79,8 +87,12 @@ const createWorkPlace = (player, prevWorkPlace) => {
   const { id, marker } = freePositions[randomIndex]
 
   const index = workPlaces.findIndex((w) => w.id === id)
-  workPlaces[index].playerId = player.id
+  const workPlace = workPlaces[index]
+  workPlace.playerId = player.id
 
+  player.call('addWorkBlip', [
+    { position: workPlace.position, name: 'Мiсце роботи' },
+  ])
   marker.showFor(player)
 }
 const removeWorkPlace = (player) => {
@@ -91,6 +103,7 @@ const removeWorkPlace = (player) => {
   workPlace.playerId = null
   workPlace.isWork = false
   workPlace.marker.hideFor(player)
+  player.call('removeWorkBlip')
 }
 
 // Взяття/звільнення з роботи
@@ -168,6 +181,7 @@ const handleWork = async (player) => {
   if (workPlace.isWork) return
 
   workPlace.isWork = true
+  workPlace.marker.hideFor(player)
 
   player.call('startWorkAnimation')
   await new Promise((res) => setTimeout(res, 26000).unref())
@@ -178,6 +192,7 @@ const handleWork = async (player) => {
   addSalary(player, salary)
   removeWorkPlace(player)
 
+  player.notify('~g~Вирушайте на наступну мiтку')
   createWorkPlace(player, workPlace)
 }
 
