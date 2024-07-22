@@ -6,14 +6,14 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled)
 }
 
-const markerRadius = 1.1
+const markerRadius = 1
 
 // Мітка взяття/звільнення з роботи
-const toggleWorkPosition = new mp.Vector3(732.56, 131.26, 79.75)
+const toggleWorkPosition = new mp.Vector3(722.01, 141.19, 79.75)
 const toggleWorkShape = mp.colshapes.newSphere(
   toggleWorkPosition.x,
   toggleWorkPosition.y,
-  toggleWorkPosition.z,
+  toggleWorkPosition.z + 0.3,
   markerRadius
 )
 mp.markers.new(1, toggleWorkPosition, 1)
@@ -42,7 +42,7 @@ const initWorkerMarkers = () => {
     const shape = mp.colshapes.newSphere(
       position.x,
       position.y,
-      position.z,
+      position.z + 0.3,
       markerRadius
     )
     const marker = mp.markers.new(1, position, 1, {
@@ -60,6 +60,12 @@ const initWorkerMarkers = () => {
   }
 }
 initWorkerMarkers()
+
+// Перевірка чи гравець влаштований на роботу
+const isPlayerHasJob = (player) => {
+  const workPlace = workPlaces.find((w) => w.playerId === player.id)
+  return workPlace ? true : false
+}
 
 // створення/видаляння міток місць роботи
 const createWorkPlace = (player, prevWorkPlace) => {
@@ -110,7 +116,7 @@ const turnOnJob = (player) => {
   )
   player.notify('~g~Вирушайте на першу мiтку')
 
-  player.setVariable('isWork', true)
+  player.setOwnVariable('totalSalary', 0)
 
   // Створення робочого місця
   createWorkPlace(player)
@@ -187,19 +193,19 @@ const workZoneShape = mp.colshapes.newSphere(
 )
 mp.events.add('playerExitColshape', (player, shape) => {
   if (shape != workZoneShape) return
-  const isWork = player.getVariable('isWork') ? true : false
+  const isWork = isPlayerHasJob(player)
   if (!isWork) return
 
-  turnOffJob(player)
   removeAllSalary(player)
+  turnOffJob(player)
 })
 
 // Смерть гравця
 mp.events.add('playerDeath', (player) => {
-  const isWork = player.getVariable('isWork')
+  const isWork = isPlayerHasJob(player)
   if (isWork) {
-    turnOffJob(player)
     removeAllSalary(player)
+    turnOffJob(player)
   }
 })
 
@@ -212,7 +218,7 @@ mp.events.add('tryHandleMarker', async (player) => {
 
   if (toggleWorkShape.isPointWithin(playerPosition)) {
     // Взаємодія з міткою влаштування/звільнення з роботи
-    const isWork = player.getVariable('isWork') ? true : false
+    const isWork = isPlayerHasJob(player)
     if (isWork) {
       turnOffJob(player)
     } else {
