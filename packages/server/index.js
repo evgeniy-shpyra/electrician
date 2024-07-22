@@ -20,19 +20,19 @@ mp.markers.new(1, toggleWorkPosition, 1)
 
 // Мітки місць роботи, ініціалізація
 const workPlacesPosition = [
-  new mp.Vector3(664.6714477539062, 112.72749328613281, 80),
-  new mp.Vector3(670.2241821289062, 128.05892944335938, 80),
-  new mp.Vector3(664.2767944335938, 130.1977996826172, 80),
-  new mp.Vector3(686.7776489257812, 144.71788024902344, 80),
-  new mp.Vector3(692.6104736328125, 142.69354248046875, 80),
-  new mp.Vector3(685.4440307617188, 169.13719177246094, 80),
-  new mp.Vector3(679.611572265625, 171.16233825683594, 80),
-  new mp.Vector3(709.9921264648438, 165.68577575683594, 80),
-  new mp.Vector3(717.9031982421875, 153.10841369628906, 80),
-  new mp.Vector3(703.252197265625, 119.6226806640625, 80),
-  new mp.Vector3(709.0304565429688, 117.49996948242188, 80),
-  new mp.Vector3(703.2955932617188, 102.20745849609375, 80),
-  new mp.Vector3(697.4491577148438, 104.26578521728516, 80),
+  new mp.Vector3(664.6714477539062, 112.72749328613281, 79.92),
+  new mp.Vector3(670.2241821289062, 128.05892944335938, 79.92),
+  new mp.Vector3(664.2767944335938, 130.1977996826172, 79.92),
+  new mp.Vector3(686.7776489257812, 144.71788024902344, 79.92),
+  new mp.Vector3(692.6104736328125, 142.69354248046875, 79.92),
+  new mp.Vector3(685.4440307617188, 169.13719177246094, 79.9),
+  new mp.Vector3(679.611572265625, 171.16233825683594, 79.9),
+  new mp.Vector3(709.9921264648438, 165.68577575683594, 79.7),
+  new mp.Vector3(717.9031982421875, 153.10841369628906, 79.7),
+  new mp.Vector3(703.252197265625, 119.6226806640625, 79.92),
+  new mp.Vector3(709.0304565429688, 117.49996948242188, 79.92),
+  new mp.Vector3(703.2955932617188, 102.20745849609375, 79.7),
+  new mp.Vector3(697.4491577148438, 104.26578521728516, 79.7),
 ]
 const workPlaces = []
 
@@ -206,7 +206,6 @@ mp.events.add('playerDeath', (player) => {
 mp.events.add('tryHandleMarker', async (player) => {
   const { x, y, z } = player.position
   const playerPosition = new mp.Vector3(x, y, z)
-
   // Якщо гравець не на тереторії електростанції
   if (!workZoneShape.isPointWithin(playerPosition)) return
 
@@ -230,9 +229,9 @@ mp.events.add('tryHandleMarker', async (player) => {
 
     const isOnWorkPlace = workPlace.shape.isPointWithin(playerPosition)
     if (!isOnWorkPlace) return
-    
+
     workPlace.isWork = true
-    
+
     player.call('startWorkAnimation')
     await new Promise((res) => setTimeout(res, 26000))
 

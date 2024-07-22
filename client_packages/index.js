@@ -11,7 +11,7 @@ mp.events.add('startWorkAnimation', async () => {
   if (!mp.game.streaming.hasAnimDictLoaded(animDict)) {
     mp.gui.chat.push(mp.game.streaming.requestAnimDict(animDict))
     while (!mp.game.streaming.hasAnimDictLoaded(animDict)) {
-      await mp.game.waitAsync(0)
+      await mp.game.waitAsync(100)
     }
   }
 
